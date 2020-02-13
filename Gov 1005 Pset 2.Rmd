@@ -1,0 +1,84 @@
+---
+title: "Gov 1005 Pset 2"
+author: "Ilyas Mardin"
+date: "2/12/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(fivethirtyeight)
+library(readr)
+library(gov.1005.data)
+library(dplyr)
+library(ggplot2)
+
+```
+
+## Mad Libs
+
+```{r include=FALSE}
+Q1 <- endorsements_2020 %>%
+  arrange(date) %>%
+  slice(1) %>%
+  pull(date)
+
+```
+
+```{r include=FALSE}
+Q2 <- endorsements_2020 %>%
+  arrange(desc(date)) %>%
+  slice(1) %>%
+  pull(date)
+
+```
+
+```{r include=FALSE}
+Q3 <- endorsements_2020 %>%
+  filter(endorsee == "Pete Buttigieg", position == "mayor") %>%
+  pull(endorser)
+
+
+```
+
+```{r include=FALSE}
+Q4 <- endorsements_2020 %>%
+  filter(state == "NH") %>%
+  summarise(mp <- mean(points))
+```
+
+```{r include=FALSE}
+Q5 <- endorsements_2020 %>%
+  filter(endorsee == "Elizabeth Warren" | endorsee == "Amy Klobuchar") %>%
+  summarise(sp <- sum(points))
+
+```
+
+```{r include=FALSE}
+Q6a <- class(endorsements_2020$position)
+Q6b <- class(endorsements_2020$endorser)
+Q6c <- class(endorsements_2020$points)
+```
+
+1. The earliest date for an endorsement in the data set is `r Q1`.
+2. The most recent date for an endorsement in the data set is `r Q2`.
+3. `r Q3` is the mayor who has endorsed Pete Buttigieg.
+4. Endorsers from New Hampshire have an average of `r Q4` endorsement points.
+5. Between them, the two female candidates remaining in the race (Elizabeth Warren and Amy Klobuchar), have a total of `r Q5` endorsement points.
+6. The type of data you are working with (words, numbers, categories, or fancier data types like dates) determines what kinds of operations you can perform on it. To distinguish different types of data, it's useful tp use the function clas(). This function allows you to get to know what kind of data you're working with.
+a. The variable "position" is a `r Q6a` class of variable.
+b. The variable "endorser" is a `r Q6b` class of variable.
+c. The variable "points" is a `r Q6c` class of variable.
+
+## Put It Into Practice
+```{r}
+age_data <- congress %>%
+  filter(party %in% c("D", "R")) %>%
+  group_by(year, party) %>%
+  summarise(avg_age = mean(age))
+
+ggplot(age_data, aes(year, avg_age, color = party)) +
+  geom_line() + ggtitle("Average Age of Members of Congress", subtitle = "At the start of the term, 1947-2013") + expand_limits(x = 1950, y = 40) + scale_x_continuous() + scale_y_continuous() + labs(x = "Year", y = "Average Age of Congressmen") + theme(plot.title = element_text(face = "bold"))
+
+```
